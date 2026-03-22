@@ -4,7 +4,8 @@
     <title>Invoice SaaS</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="bg-gray-100 text-gray-800">
+
+<body class="bg-gray-100 min-h-screen">
 
 <nav class="bg-white shadow-md px-6 py-4 flex justify-between items-center">
     <h1 class="text-xl font-bold text-blue-600">Invoice SaaS</h1>
