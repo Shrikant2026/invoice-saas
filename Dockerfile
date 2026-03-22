@@ -1,5 +1,8 @@
 FROM php:8.2-apache
 
+# Fix Apache MPM conflict
+RUN a2dismod mpm_event && a2enmod mpm_prefork
+
 # Install dependencies
 RUN apt-get update && apt-get install -y \
     libzip-dev \
@@ -8,7 +11,7 @@ RUN apt-get update && apt-get install -y \
     curl \
     && docker-php-ext-install pdo pdo_mysql zip
 
-# Enable Apache mod_rewrite
+# Enable rewrite
 RUN a2enmod rewrite
 
 # Set working directory
@@ -23,11 +26,11 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Install Laravel dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# Set permissions
+# Fix permissions
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 775 storage bootstrap/cache
 
-# Set Apache root to public folder
+# Set Apache root to public
 RUN sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available/000-default.conf
 
 # Expose port
