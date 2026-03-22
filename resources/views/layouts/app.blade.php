@@ -7,22 +7,24 @@
 
 <body class="bg-gray-100 min-h-screen">
 
+@auth
 <nav class="bg-white shadow-md px-6 py-4 flex justify-between items-center">
     <h1 class="text-xl font-bold text-blue-600">Invoice SaaS</h1>
 
     <div class="flex items-center gap-4">
-        <a href="/dashboard" class="hover:text-blue-500">Dashboard</a>
-        <a href="/clients" class="hover:text-blue-500">Clients</a>
-        <a href="/invoices" class="hover:text-blue-500">Invoices</a>
+        <a href="/dashboard">Dashboard</a>
+        <a href="/clients">Clients</a>
+        <a href="/invoices">Invoices</a>
 
         <form method="POST" action="/logout">
             @csrf
-            <button class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
+            <button class="bg-red-500 text-white px-3 py-1 rounded">
                 Logout
             </button>
         </form>
     </div>
 </nav>
+@endauth
 
 <div class="max-w-6xl mx-auto mt-6 p-4">
     @if(session('success'))
