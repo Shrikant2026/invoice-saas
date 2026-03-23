@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Auth</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <title>Invoice SaaS</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
