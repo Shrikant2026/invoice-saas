@@ -70,6 +70,21 @@
         </form>
 
         <!-- Login -->
+        <div class="mt-6 text-center text-sm text-gray-300">
+
+            <div class="border-t border-white/20 pt-4">
+                <p class="mb-2 font-medium text-white">What you can do here 👇</p>
+
+                <div class="space-y-1 text-xs text-gray-200">
+                    <p>📊 Manage your clients easily</p>
+                    <p>🧾 Create professional invoices</p>
+                    <p>📥 Download invoices as PDF</p>
+                    <p>⚡ Track your business efficiently</p>
+                </div>
+            </div>
+
+        </div>
+
         <p class="text-center text-gray-300 mt-6 text-sm">
             Already have an account?
             <a href="{{ route('login') }}" class="text-blue-300 hover:underline">
@@ -79,5 +94,7 @@
 
     </div>
 </div>
-
+<div class="absolute bottom-4 left-0 w-full text-center text-xs text-gray-300">
+    © {{ date('Y') }} Invoice Builder SaaS • Built for modern businesses 🚀
+</div>
 @endsection

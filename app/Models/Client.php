@@ -13,7 +13,9 @@ class Client extends Model
         'name',
         'email',
         'phone',
-        'address',
+        'organization',
+        'avatar',
+        'user_id'
     ];
 
     public function user()
@@ -25,4 +27,6 @@ class Client extends Model
     {
         return $this->hasMany(Invoice::class);
     }
+
+    
 }

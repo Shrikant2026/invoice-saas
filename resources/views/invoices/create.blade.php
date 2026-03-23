@@ -2,55 +2,64 @@
 
 @section('content')
 
-<h2>Create Invoice</h2>
+<div class="max-w-4xl mx-auto bg-white p-6 rounded-xl shadow">
 
-<form method="POST" action="{{ route('invoices.store') }}">
-    @csrf
+    <h2 class="text-xl font-semibold mb-4">Create Invoice</h2>
 
-    <label>Client:</label>
-    <select name="client_id" required>
-        @foreach($clients as $client)
-            <option value="{{ $client->id }}">{{ $client->name }}</option>
-        @endforeach
-    </select>
+    <form method="POST" action="{{ route('invoices.store') }}">
+        @csrf
 
-    <br><br>
+        <!-- Select Client -->
+        <div class="mb-4">
+            <label class="block mb-1 text-sm">Select Client</label>
+            <select name="client_id" class="w-full border p-2 rounded" required>
+                @foreach($clients as $client)
+                    <option value="{{ $client->id }}">
+                        {{ $client->name }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
 
-    <table border="1" cellpadding="10">
-        <thead>
-            <tr>
-                <th>Item</th>
-                <th>Qty</th>
-                <th>Price</th>
-                <th>Total</th>
-                <th>Action</th>
-            </tr>
-        </thead>
+        <!-- Items -->
+        <div id="items-container" class="space-y-3">
 
-        <tbody id="items">
-            <tr>
-                <td><input type="text" name="items[0][name]" required></td>
-                <td><input type="number" name="items[0][quantity]" value="1" class="qty"></td>
-                <td><input type="number" name="items[0][price]" value="0" class="price"></td>
-                <td class="total">0</td>
-                <td><button type="button" onclick="removeRow(this)">X</button></td>
-            </tr>
-        </tbody>
-    </table>
+            <div class="grid grid-cols-4 gap-2 item-row">
+                <input type="text" name="items[0][name]" placeholder="Item"
+                    class="border p-2 rounded" required>
 
-    <br>
+                <input type="number" name="items[0][quantity]" placeholder="Qty"
+                    class="border p-2 rounded qty" required>
 
-    <button type="button" onclick="addRow()">+ Add Item</button>
+                <input type="number" step="0.01" name="items[0][price]" placeholder="Price"
+                    class="border p-2 rounded price" required>
 
-    <br><br>
+                <input type="text" placeholder="Total"
+                    class="border p-2 rounded total bg-gray-100" readonly>
+            </div>
 
-    <h3>Subtotal: <span id="subtotal">0</span></h3>
+        </div>
 
-    <button type="submit">Save Invoice</button>
-    @if(session('error'))
-        <p style="color:red;">{{ session('error') }}</p>
-    @endif
-</form>
+        <!-- Add Button -->
+        <button type="button" onclick="addRow()"
+            class="mt-3 bg-gray-200 px-3 py-1 rounded">
+            + Add Item
+        </button>
+
+        <!-- Grand Total -->
+        <div class="mt-6 text-right">
+            <p class="text-sm">Grand Total</p>
+            <p id="grand-total" class="text-xl font-bold text-green-600">₹0.00</p>
+        </div>
+
+        <!-- Submit -->
+        <button class="mt-4 bg-blue-600 text-white px-4 py-2 rounded">
+            Save Invoice
+        </button>
+
+    </form>
+
+</div>
 
 @endsection
 
@@ -58,45 +67,55 @@
 let index = 1;
 
 function addRow() {
-    let row = `
-    <tr>
-        <td><input type="text" name="items[${index}][name]" required class="class="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"></td>
-        <td><input type="number" name="items[${index}][quantity]" value="1" class="class="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"></td>
-        <td><input type="number" name="items[${index}][price]" value="0" class="class="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400""></td>
-        <td class="total">0</td>
-        <td><button type="button" onclick="removeRow(this)">X</button></td>
-    </tr>
+    const container = document.getElementById('items-container');
+
+    const row = document.createElement('div');
+    row.classList.add('grid', 'grid-cols-4', 'gap-2', 'item-row');
+
+    row.innerHTML = `
+        <input type="text" name="items[${index}][name]" placeholder="Item"
+            class="border p-2 rounded" required>
+
+        <input type="number" name="items[${index}][quantity]" placeholder="Qty"
+            class="border p-2 rounded qty" required>
+
+        <input type="number" step="0.01" name="items[${index}][price]" placeholder="Price"
+            class="border p-2 rounded price" required>
+
+        <input type="text" placeholder="Total"
+            class="border p-2 rounded total bg-gray-100" readonly>
     `;
-    document.getElementById('items').insertAdjacentHTML('beforeend', row);
+
+    container.appendChild(row);
     index++;
 }
 
-function removeRow(button) {
-    button.closest('tr').remove();
-    calculateTotal();
-}
-
+// Auto calculation
 document.addEventListener('input', function(e) {
+
     if (e.target.classList.contains('qty') || e.target.classList.contains('price')) {
-        let row = e.target.closest('tr');
-        let qty = row.querySelector('.qty').value;
-        let price = row.querySelector('.price').value;
-        let total = qty * price;
 
-        row.querySelector('.total').innerText = total;
+        const row = e.target.closest('.item-row');
 
-        calculateTotal();
+        const qty = row.querySelector('.qty').value || 0;
+        const price = row.querySelector('.price').value || 0;
+
+        const total = qty * price;
+
+        row.querySelector('.total').value = total.toFixed(2);
+
+        updateGrandTotal();
     }
 });
 
-function calculateTotal() {
-    let subtotal = 0;
+function updateGrandTotal() {
+    let grandTotal = 0;
 
-    document.querySelectorAll('#items tr').forEach(row => {
-        let total = parseFloat(row.querySelector('.total').innerText) || 0;
-        subtotal += total;
+    document.querySelectorAll('.total').forEach(el => {
+        grandTotal += parseFloat(el.value) || 0;
     });
 
-    document.getElementById('subtotal').innerText = subtotal;
+    document.getElementById('grand-total').innerText =
+        '₹' + grandTotal.toFixed(2);
 }
 </script>
