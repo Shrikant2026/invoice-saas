@@ -43,4 +43,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/invoices/{invoice}/pdf', [InvoiceController::class, 'downloadPdf'])->name('invoices.pdf');
 });
 
+use App\Http\Controllers\Auth\SocialController;
+
+Route::get('/auth/google', [SocialController::class, 'redirectToGoogle']);
+Route::get('/auth/google/callback', [SocialController::class, 'handleGoogleCallback']);
+
+Route::get('/auth/github', [SocialController::class, 'redirectToGithub']);
+Route::get('/auth/github/callback', [SocialController::class, 'handleGithubCallback']);
+
 require __DIR__.'/auth.php';
