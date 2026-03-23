@@ -67,6 +67,8 @@
             </button>
         </form>
         <!-- Divider -->
+
+        
         <div class="text-center text-gray-300 my-5">
             or continue with
         </div>
@@ -87,6 +89,21 @@
             </a>
 
         </div>
+
+        <div class="mt-6 text-center text-sm text-gray-300">
+
+            <div class="border-t border-white/20 pt-4">
+                <p class="mb-2 font-medium text-white">What you can do here 👇</p>
+
+                <div class="space-y-1 text-xs text-gray-200">
+                    <p>📊 Manage your clients easily</p>
+                    <p>🧾 Create professional invoices</p>
+                    <p>📥 Download invoices as PDF</p>
+                    <p>⚡ Track your business efficiently</p>
+                </div>
+            </div>
+
+        </div>
         <!-- Register -->
         <p class="text-center text-gray-300 mt-6 text-sm">
             Don't have an account?
@@ -97,5 +114,7 @@
 
     </div>
 </div>
-
+<div class="absolute bottom-4 left-0 w-full text-center text-xs text-gray-300">
+    © {{ date('Y') }} Invoice Builder SaaS • Built for modern businesses 🚀
+</div>
 @endsection

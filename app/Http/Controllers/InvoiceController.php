@@ -33,15 +33,24 @@ class InvoiceController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+
     public function store(Request $request)
     {
-
+        // ✅ PLAN LIMIT CHECK (KEEP THIS)
         $invoiceCount = auth()->user()->invoices()->count();
 
         if (auth()->user()->plan === 'free' && $invoiceCount >= 5) {
             return back()->with('error', 'Free plan limit reached. Upgrade to Pro.');
         }
 
+        $request->validate([
+            'client_id' => 'required|exists:clients,id',
+            'items.*.name' => 'required',
+            'items.*.quantity' => 'required|numeric|min:1',
+            'items.*.price' => 'required|numeric|min:0',
+        ]);
+
+        // ✅ CREATE INVOICE
         $invoice = Invoice::create([
             'user_id' => auth()->id(),
             'client_id' => $request->client_id,
@@ -54,12 +63,18 @@ class InvoiceController extends Controller
 
         $subtotal = 0;
 
+        // ✅ LOOP THROUGH DYNAMIC ITEMS
         foreach ($request->items as $item) {
+
+            // skip empty rows (important)
+            if (!isset($item['name']) || !$item['name']) continue;
+
             $total = $item['quantity'] * $item['price'];
 
+            // ✅ SAVE EACH ITEM
             InvoiceItem::create([
                 'invoice_id' => $invoice->id,
-                'item_name' => $item['name'],
+                'item_name' => $item['name'], // KEEP YOUR COLUMN NAME
                 'quantity' => $item['quantity'],
                 'price' => $item['price'],
                 'total' => $total,
@@ -68,12 +83,14 @@ class InvoiceController extends Controller
             $subtotal += $total;
         }
 
+        // ✅ UPDATE TOTALS
         $invoice->update([
             'subtotal' => $subtotal,
             'total' => $subtotal
         ]);
 
-        return redirect()->route('invoices.index');
+        return redirect()->route('invoices.index')
+            ->with('success', 'Invoice created successfully');
     }
 
     /**
