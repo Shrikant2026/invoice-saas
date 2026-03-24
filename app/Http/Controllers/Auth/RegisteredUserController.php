@@ -12,6 +12,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
+use App\Models\Plan;
+use App\Models\Subscription;
+use Carbon\Carbon;
+use App\Services\SubscriptionService;
 
 class RegisteredUserController extends Controller
 {
@@ -42,10 +46,14 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
+        SubscriptionService::assignFreePlan($user);
+
         event(new Registered($user));
 
         Auth::login($user);
 
         return redirect(RouteServiceProvider::HOME);
     }
+
+    
 }

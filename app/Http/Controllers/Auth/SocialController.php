@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Laravel\Socialite\Facades\Socialite;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use App\Services\SubscriptionService;
 
 class SocialController extends Controller
 {
@@ -31,6 +32,10 @@ class SocialController extends Controller
                 'password' => bcrypt('random_password')
             ]
         );
+        
+        if(!$user->subscription){
+            SubscriptionService::assignFreePlan($user);
+        }
 
         Auth::login($user);
 
@@ -57,6 +62,10 @@ class SocialController extends Controller
                 'password' => bcrypt('random_password')
             ]
         );
+
+        if(!$user->subscription){
+            SubscriptionService::assignFreePlan($user);
+        }
 
         Auth::login($user);
 
